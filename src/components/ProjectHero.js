@@ -1,6 +1,7 @@
 // components/ProjectHero.js
 import { useState, useEffect , useCallback} from 'react';
 import styled from 'styled-components';
+import { useProjects } from '../hooks/useProjects';
 import { motion, AnimatePresence } from 'framer-motion';
 import getStrapiImageUrl from "../utils/imageHelper";
 import { ArrowLeft, ArrowRight } from '../assets/icons';
@@ -194,92 +195,68 @@ const NavButton = styled.button`
     height: 64px;
   }
 `
-
-const ProjectHero = ({ projects }) => {
-  const [[page, direction], setPage] = useState([0, 0]);
+const ProjectHero = () => {
+  const { projects, loading } = useProjects();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [[page, direction], setPage] = useState([0, 0]);
 
-  const currentIndex = ((page % projects.length) + projects.length) % projects.length;
-  const currentProject = projects[currentIndex];
+  // Move hooks before any conditional returns
+  useEffect(() => {
+    let timer;
+    if (!loading && projects.length > 0) {
+      timer = setInterval(() => {
+        paginate(1);
+      }, 3000);
+    }
+    return () => clearInterval(timer);
+  }, [page, loading, projects.length]);
+
+  if (loading) return null;
+
+  const highlightedProjects = projects.filter(p => p.highlight);
+  if (highlightedProjects.length === 0) return null;
+
+  const currentIndex = ((page % highlightedProjects.length) + highlightedProjects.length) % highlightedProjects.length;
+  const currentProject = highlightedProjects[currentIndex];
 
   const paginate = (newDirection) => {
     if (isAnimating) return;
     setPage([page + newDirection, newDirection]);
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      paginate(1);
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, [page]);
-
-  const imageUrl = getStrapiImageUrl(currentProject?.mainImage?.url || currentProject?.mainImage);
-
   return (
     <HeroContainer>
-      {/* Fixed Navigation */}
-      <MainContainer>
-        <NavArea side="left">
-          <NavButton onClick={() => paginate(-1)} disabled={isAnimating}>
-            <ArrowLeft />
-          </NavButton>
-        </NavArea>
-
-        <NavArea side="right">
-          <NavButton onClick={() => paginate(1)} disabled={isAnimating}>
-            <ArrowRight />
-          </NavButton>
-        </NavArea>
-
-        <NavigationDots>
-          {projects.map((_, index) => (
-            <Dot 
-              key={index} 
-              active={index === currentIndex}
-              onClick={() => {
-                if (isAnimating) return;
-                const newDirection = index - currentIndex;
-                setPage([index, Math.sign(newDirection)]);
+      <AnimatePresence initial={false} custom={direction}>
+        <SlideWrapper
+          key={page}
+          custom={direction}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          onAnimationStart={() => setIsAnimating(true)}
+          onAnimationComplete={() => setIsAnimating(false)}
+        >
+          <ImageContainer>
+            <HeroImage
+              src={currentProject.getMainImageUrl()}
+              alt={currentProject.title}
+              onError={(e) => {
+                console.error('Failed to load image:', e.target.src);
+                e.target.src = '/placeholder-image.jpg';
               }}
             />
-          ))}
-        </NavigationDots>
-      </MainContainer>
+            <Overlay />
+          </ImageContainer>
 
-      {/* Animated Content */}
-      <SlideContainer>
-        <AnimatePresence initial={false} custom={direction}>
-          <Slide
-            key={page}
-            custom={direction}
-            initial={{ x: direction > 0 ? "100%" : "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: direction < 0 ? "100%" : "-100%" }}
-            transition={{
-              x: { type: "tween", duration: 0.75, ease: "easeInOut" }
-            }}
-            onAnimationStart={() => setIsAnimating(true)}
-            onAnimationComplete={() => setIsAnimating(false)}
-          >
-            <ImageContainer>
-              {imageUrl ? (
-                <HeroImage
-                  src={imageUrl}
-                  alt={currentProject.title}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    console.error('Failed to load image:', imageUrl);
-                  }}
-                />
-              ) : (
-                <ImageFallback>
-                  <span>No image available</span>
-                </ImageFallback>
-              )}
-              <Overlay />
-            </ImageContainer>
+          <MainContainer>
+            <NavArea side="left">
+              <NavButton onClick={() => paginate(-1)} disabled={isAnimating}>
+                <ArrowLeft />
+              </NavButton>
+            </NavArea>
 
             <Content>
               <TopContent />
@@ -288,15 +265,33 @@ const ProjectHero = ({ projects }) => {
                   <Title>{currentProject.title}</Title>
                   <Location>{currentProject.location}</Location>
                 </TextContent>
+
+                <NavigationDots>
+                  {highlightedProjects.map((_, index) => (
+                    <Dot 
+                      key={index} 
+                      active={index === currentIndex}
+                      onClick={() => {
+                        if (isAnimating) return;
+                        const newDirection = index - currentIndex;
+                        setPage([index, Math.sign(newDirection)]);
+                      }}
+                    />
+                  ))}
+                </NavigationDots>
               </BottomContent>
             </Content>
-          </Slide>
-        </AnimatePresence>
-      </SlideContainer>
+
+            <NavArea side="right">
+              <NavButton onClick={() => paginate(1)} disabled={isAnimating}>
+                <ArrowRight />
+              </NavButton>
+            </NavArea>
+          </MainContainer>
+        </SlideWrapper>
+      </AnimatePresence>
     </HeroContainer>
   );
 };
-
-
 
 export default ProjectHero;

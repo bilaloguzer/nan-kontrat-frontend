@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useProjects } from '../../hooks/useProjects';
 import { useNavigate, } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
-import { Paragraph } from '../../styles/GlobalStyles';
 import {
   PageContainer,
   LeftSection,
@@ -18,62 +15,46 @@ import {
   ProjectTitle,
   
     CarouselControls,
-    FullScreenContainer,
     BackgroundImage,
     FullScreenImage,
     ImageCounter,
     ProjectContent,
-    Summary,SummaryCell,SummaryGrid,SummaryTitle,
+  SummaryCell,SummaryGrid,
     
     ProjectDescription,
 } from "./ProjectDetailPageStyles";
 // components/ProjectDetailPage/index.js
 
-const ProjectDetailPage = () => {
-    const { slug } = useParams(); // Change from projectId to slug
+const ProjectDetailPage = ({ project }) => {
     const navigate = useNavigate();
-    const { projects, loading, error } = useProjects();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isFullScreen, setIsFullScreen] = useState(false);
   
-    if (loading) return <Paragraph>Loading...</Paragraph>;
-    if (error) return <Paragraph>Error: {error.message}</Paragraph>;
-  
-    // Find project by slug instead of ID
-    const project = projects.find((p) => p.slug === slug);
-    console.log('Found project:', project);
-  
-    if (!project) {
-      console.log('Project not found for slug:', slug);
-      return <Navigate to="/projects" />;
-    }
+    if (!project) return <Navigate to="/projects" />;
   
     const handleCancel = () => navigate('/projects');
   
     const handleNextImage = () => {
       const totalImages = project.getTotalImages();
-      setCurrentImageIndex((prev) => (prev + 1) % totalImages);
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % totalImages);
     };
   
     const handlePreviousImage = () => {
       const totalImages = project.getTotalImages();
-      setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
+      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + totalImages) % totalImages);
     };
   
     const getCurrentImageUrl = () => {
       if (currentImageIndex === 0) {
         return project.getMainImageUrl();
-      } else {
-        return project.getProjectImageUrl(currentImageIndex - 1);
       }
+      return project.getProjectImageUrl(currentImageIndex - 1);
     };
-  
-    const currentImageUrl = getCurrentImageUrl();
-    console.log('Current image URL:', currentImageUrl);
   
     return (
       <PageContainer>
         <LeftSection>
-          <BackgroundImage $imageUrl={currentImageUrl} />
+          <BackgroundImage $imageUrl={getCurrentImageUrl()} />
           <MiniNavBar>
             <Logo to="/">NAN</Logo>
             <CancelIcon onClick={handleCancel}>×</CancelIcon>
@@ -81,24 +62,19 @@ const ProjectDetailPage = () => {
           
           <ImageCarousel>
             <CarouselImage 
-              src={currentImageUrl} 
-              alt={`Project Image ${currentImageIndex + 1}`}
-              onError={(e) => {
-                console.error('Image failed to load:', e.target.src);
-                e.target.src = '/placeholder-image.jpg';
-              }}
+              src={getCurrentImageUrl()} 
+              alt={project.title}
+              onClick={() => setIsFullScreen(true)} 
             />
-            {project.getTotalImages() > 1 && (
-              <CarouselControls>
-                <ImageCounter>
-                  {`${String(currentImageIndex + 1).padStart(2, '0')} / ${String(project.getTotalImages()).padStart(2, '0')}`}
-                </ImageCounter>
-                <CarouselButtons>
-                  <CarouselButton onClick={handlePreviousImage}>←</CarouselButton>
-                  <CarouselButton onClick={handleNextImage}>→</CarouselButton>
-                </CarouselButtons>
-              </CarouselControls>
-            )}
+            <CarouselControls>
+              <ImageCounter>
+                {`${String(currentImageIndex + 1).padStart(2, '0')} / ${String(project.getTotalImages()).padStart(2, '0')}`}
+              </ImageCounter>
+              <CarouselButtons>
+                <CarouselButton onClick={handlePreviousImage}>←</CarouselButton>
+                <CarouselButton onClick={handleNextImage}>→</CarouselButton>
+              </CarouselButtons>
+            </CarouselControls>
           </ImageCarousel>
         </LeftSection>
   
@@ -108,15 +84,23 @@ const ProjectDetailPage = () => {
           <ProjectContent>{`${project.startDate} - ${project.finishDate}`}</ProjectContent>
           <SummaryGrid>
             <SummaryCell>Client</SummaryCell>
-            <SummaryCell>{project.client}</SummaryCell>
+            <SummaryCell>{project.client || 'N/A'}</SummaryCell>
             <SummaryCell>Designer</SummaryCell>
-            <SummaryCell>{project.designer}</SummaryCell>
+            <SummaryCell>{project.designer || 'N/A'}</SummaryCell>
           </SummaryGrid>
-          <ProjectDescription>{project.descriptionText}</ProjectDescription>
+          <ProjectDescription>{project.summary}</ProjectDescription>
         </RightSection>
+  
+        {isFullScreen && (
+          <FullScreenImage 
+            src={getCurrentImageUrl()} 
+            onClose={() => setIsFullScreen(false)}
+            onPrev={handlePreviousImage}
+            onNext={handleNextImage}
+          />
+        )}
       </PageContainer>
     );
   };
-
   export default  ProjectDetailPage;
   

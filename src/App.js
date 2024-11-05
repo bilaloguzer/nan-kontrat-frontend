@@ -1,12 +1,20 @@
 // App.js
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import Navbar from './components/Navbar/Navbar';
-import Home from './pages/Home';
-import About from './pages/About';
-import { GlobalStyle } from './styles/GlobalStyles';
-import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
-import ProjectRouter from './components/ProjectRouter';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { useState, useEffect } from "react";
+import Navbar from "./components/Navbar/Navbar";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import { GlobalStyle } from "./styles/GlobalStyles";
+import ProjectsPage from "./pages/ProjectsPage/ProjectsPage";
+import ProjectRouter from "./components/ProjectRouter";
+import { ProjectProvider } from "./context/ProjectContext";
+import { ThemeProvider } from "styled-components";
+import theme from "./styles/theme";
 
 // Create a wrapper component for the Navbar
 const NavbarWrapper = () => {
@@ -32,9 +40,11 @@ const App = () => {
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:1337/api/projects?populate=*');
+      const response = await fetch(
+        "http://localhost:1337/api/projects?populate=*"
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch projects');
+        throw new Error("Failed to fetch projects");
       }
       const data = await response.json();
       setProjects(data.data);
@@ -46,40 +56,40 @@ const App = () => {
   };
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Error: {error}
+      </div>
+    );
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-white">
-        <GlobalStyle/>
-        <NavbarWrapper />
-        <main>
-          <Routes>
-            <Route 
-              path="/" 
-              element={
-                <Home 
-                  projects={projects}
-                  isLoading={isLoading}
+    <ProjectProvider>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <div className="min-h-screen bg-white">
+            <GlobalStyle />
+            <NavbarWrapper />
+            <main>
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Home projects={projects} isLoading={isLoading} />}
                 />
-              } 
-            />
-            <Route 
-              path="/projects" 
-              element={
-                <ProjectsPage 
-                  projects={projects}
-                  isLoading={isLoading}
+                <Route
+                  path="/projects"
+                  element={
+                    <ProjectsPage projects={projects} isLoading={isLoading} />
+                  }
                 />
-              } 
-            />
-            <Route path="/projects/:slug" element={<ProjectRouter />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+                <Route path="/projects/:slug" element={<ProjectRouter />} />
+                <Route path="/about" element={<About />} />
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      </ThemeProvider>
+    </ProjectProvider>
   );
 };
 
