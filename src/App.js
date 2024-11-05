@@ -1,11 +1,24 @@
 // App.js
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
+import Navbar from './components/Navbar/Navbar';
 import Home from './pages/Home';
-import Projects from './pages/Projects';
 import About from './pages/About';
-import { GlobalStyles } from './styles/GlobalStyles';
+import { GlobalStyle } from './styles/GlobalStyles';
+import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
+import ProjectRouter from './components/ProjectRouter';
+
+// Create a wrapper component for the Navbar
+const NavbarWrapper = () => {
+  const location = useLocation();
+  const isProjectDetail = location.pathname.match(/^\/projects\/[^/]+$/);
+
+  if (isProjectDetail) {
+    return null;
+  }
+
+  return <Navbar />;
+};
 
 const App = () => {
   const [projects, setProjects] = useState([]);
@@ -39,7 +52,8 @@ const App = () => {
   return (
     <Router>
       <div className="min-h-screen bg-white">
-        <Navbar />
+        <GlobalStyle/>
+        <NavbarWrapper />
         <main>
           <Routes>
             <Route 
@@ -54,12 +68,13 @@ const App = () => {
             <Route 
               path="/projects" 
               element={
-                <Projects 
+                <ProjectsPage 
                   projects={projects}
                   isLoading={isLoading}
                 />
               } 
             />
+            <Route path="/projects/:slug" element={<ProjectRouter />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </main>

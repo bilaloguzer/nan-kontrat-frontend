@@ -3,21 +3,20 @@ import ProjectHero from '../components/ProjectHero';
 const Home = ({ projects, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div>
         Loading...
       </div>
     );
   }
 
-  // Get the first highlighted project for the hero
-  const heroProject = projects.find(project => project.highlight) || projects[0];
+  // Filter highlighted projects if needed
+  const highlightedProjects = projects.filter(project => project.highlight);
 
   return (
-    <div className="min-h-screen">
-      <ProjectHero project={heroProject} />
+    <div>
+      <ProjectHero projects={highlightedProjects.length > 0 ? highlightedProjects : projects} />
       {/* Rest of home page content */}
     </div>
   );
 };
-
-export default Home; 
+export default Home;

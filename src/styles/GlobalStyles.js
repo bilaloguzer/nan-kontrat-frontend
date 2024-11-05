@@ -1,14 +1,48 @@
-// styles/GlobalStyles.js
-import { createGlobalStyle } from 'styled-components';
+// src/styles/globalStyles.js
 
-export const GlobalStyles = createGlobalStyle`
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-  }
+import styled, { createGlobalStyle } from 'styled-components';
+import { typography } from './typography';
+import { colors, spacing } from './theme';
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
-  }
+export const GlobalStyle = createGlobalStyle`
+  
 `;
+
+export const Title = styled.h1`
+  font-family: ${typography.fontFamily.headers};
+  font-size: ${typography.fontSize.h1};
+  line-height: ${typography.lineHeight.h1};
+  font-weight: ${typography.fontWeight.bold};
+  color: ${colors.text.body.primary};
+  margin-bottom: ${spacing.lg};
+`;
+
+export const Subtitle = styled.h2`
+  font-family: ${typography.fontFamily.headers};
+  font-size: ${typography.fontSize.h2};
+  line-height: ${typography.lineHeight.h2};
+  font-weight: ${typography.fontWeight.bold};
+  color: ${colors.text.body.secondary};
+  margin-bottom: ${spacing.md};
+`;
+
+export const Paragraph = styled.p`
+  font-family: ${typography.fontFamily.body};
+  font-size: ${typography.fontSize.p};
+  line-height: ${typography.lineHeight.p};
+  font-weight: ${typography.fontWeight.normal};
+  color: ${colors.text.body.primary};
+  margin-bottom: ${spacing.md};
+`;
+
+export const BoldParagraph = styled(Paragraph)`
+  font-weight: ${typography.fontWeight.bold};
+`;
+
+export const InvertedText = styled.span`
+  color: ${colors.text.body.invert};
+  background-color: ${colors.brand.main};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${spacing.xs};
+`;
+
