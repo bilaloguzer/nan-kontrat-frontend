@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Title, Paragraph } from '../../styles/GlobalStyles';
 import theme from '../../styles/theme';
 
 // ProjectDetailPageStyles.js
@@ -135,33 +134,40 @@ export const Summary = styled.div`
 export const SummaryGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
+  margin: 2rem 0;
+  margin-top: 1rem;
   border: 1px solid ${theme.colors.border};
-  border-radius: 4px;
+  
   overflow: hidden; // Added to contain child borders
 `;
 
 export const SummaryCell = styled.div`
   padding: 1rem;
-  min-height: 50px; // Changed height to min-height
+  min-height: fit-content; // Changed height to min-height: ;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid ${theme.colors.border};
-  
+  border-top: 1px solid ${theme.colors.border.primary};
+
   &:nth-child(odd) {
     background: ${theme.colors.surface.primary};
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-weight: 500;
-    border-right: 1px solid ${theme.colors.border};
+    border-right: 1px solid ${theme.colors.border.primary};
+    border-left: 1px solid ${theme.colors.border.primary};
+
   }
 
   &:nth-child(even) {
     background: white;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-weight: 300;
+    border-right: 1px solid ${theme.colors.border.primary};
+
   }
 
-  &:last-child, &:nth-last-child(2) {
-    border-bottom: none;
+  &:last-child,
+  &:nth-last-child(2) {
+    border-bottom: 1px solid ${theme.colors.border.primary};
   }
 `;
 

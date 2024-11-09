@@ -1,25 +1,24 @@
 // components/ProjectHero.js
-import { useState, useEffect , useCallback} from 'react';
-import styled from 'styled-components';
-import { useProjects } from '../hooks/useProjects';
-import { motion, AnimatePresence } from 'framer-motion';
-import getStrapiImageUrl from "../utils/imageHelper";
-import { ArrowLeft, ArrowRight } from '../assets/icons';
-
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import { useProjects } from "../hooks/useProjects";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, ArrowRight } from "../assets/icons";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const slideVariants = {
   enter: (direction) => ({
-    x: direction > 0 ? '100%' : '-100%',
-    opacity: 1  // Changed from 0 to 1
+    x: direction > 0 ? "100%" : "-100%",
+    opacity: 1, // Changed from 0 to 1
   }),
   center: {
     x: 0,
-    opacity: 1
+    opacity: 1,
   },
   exit: (direction) => ({
-    x: direction < 0 ? '100%' : '-100%',
-    opacity: 1  // Changed from 0 to 1
-  })
+    x: direction < 0 ? "100%" : "-100%",
+    opacity: 1, // Changed from 0 to 1
+  }),
 };
 
 const HeroContainer = styled.div`
@@ -28,19 +27,6 @@ const HeroContainer = styled.div`
   height: 100vh;
   overflow: hidden;
   background: black;
-`;
-
-const SlideContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-`;
-
-const Slide = styled(motion.div)`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  will-change: transform;
 `;
 
 // Update other styles as needed
@@ -89,43 +75,23 @@ const NavigationDots = styled.div`
   z-index: 2;
 `;
 
-
-
-
-
-
-const ImageFallback = styled.div`
-  width: 100%;
-  height: 100%;
-  background-color: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  span {
-    color: #9ca3af;
-  }
-`;
-
 const Overlay = styled.div`
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
 `;
 
-
 // Side navigation areas (96px width each)
 const NavArea = styled.div`
   position: absolute;
   top: 0;
-  ${props => props.side === 'left' ? 'left: 0;' : 'right: 0;'};
+  ${(props) => (props.side === "left" ? "left: 0;" : "right: 0;")};
   width: 96px;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
-
 
 const TopContent = styled.div`
   margin-bottom: auto;
@@ -140,11 +106,13 @@ const BottomContent = styled.div`
 const TextContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
+  cursor: pointer;
+  pointer-events: auto; // This is important since the parent Content has pointer-events: none
 `;
 
 const Title = styled.h1`
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 96px;
   font-weight: 700;
   line-height: 1.1;
@@ -153,7 +121,7 @@ const Title = styled.h1`
 `;
 
 const Location = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 36px;
   font-weight: 400;
   letter-spacing: 0.05em;
@@ -161,26 +129,12 @@ const Location = styled.div`
   color: white;
 `;
 
-const Description = styled.div`
-  max-width: 42rem;
-  
-  p {
-    font-family: 'Inter', sans-serif;
-    font-size: 24px;
-    font-weight: 300;
-    line-height: 1.5;
-    color: white;
-    opacity: 0.9;
-    margin: 0;
-  }
-`;
-
-
 const Dot = styled.div`
-  width:  ${props => props.active ? '16px' : '8px'};
+  width: ${(props) => (props.active ? "16px" : "8px")};
   height: 8px;
   border-radius: 25%;
-  background-color: ${props => props.active ? 'white' : 'rgba(255, 255, 255, 0.5)'};
+  background-color: ${(props) =>
+    props.active ? "white" : "rgba(255, 255, 255, 0.5)"};
 `;
 
 const NavButton = styled.button`
@@ -194,11 +148,15 @@ const NavButton = styled.button`
     width: 64px;
     height: 64px;
   }
-`
+`;
 const ProjectHero = () => {
-  const { projects, loading } = useProjects();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { projects, loading, error } = useProjects();
   const [isAnimating, setIsAnimating] = useState(false);
+  const navigate = useNavigate();
+  const handleProjectClick = (project) => {
+    console.log("Clicking project:", project);
+    navigate(`/projects/${project.slug}`);
+  };
   const [[page, direction], setPage] = useState([0, 0]);
 
   // Move hooks before any conditional returns
@@ -214,10 +172,12 @@ const ProjectHero = () => {
 
   if (loading) return null;
 
-  const highlightedProjects = projects.filter(p => p.highlight);
+  const highlightedProjects = projects.filter((p) => p.highlight);
   if (highlightedProjects.length === 0) return null;
 
-  const currentIndex = ((page % highlightedProjects.length) + highlightedProjects.length) % highlightedProjects.length;
+  const currentIndex =
+    ((page % highlightedProjects.length) + highlightedProjects.length) %
+    highlightedProjects.length;
   const currentProject = highlightedProjects[currentIndex];
 
   const paginate = (newDirection) => {
@@ -235,7 +195,7 @@ const ProjectHero = () => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
           onAnimationStart={() => setIsAnimating(true)}
           onAnimationComplete={() => setIsAnimating(false)}
         >
@@ -244,8 +204,8 @@ const ProjectHero = () => {
               src={currentProject.getMainImageUrl()}
               alt={currentProject.title}
               onError={(e) => {
-                console.error('Failed to load image:', e.target.src);
-                e.target.src = '/placeholder-image.jpg';
+                console.error("Failed to load image:", e.target.src);
+                e.target.src = "/placeholder-image.jpg";
               }}
             />
             <Overlay />
@@ -261,15 +221,15 @@ const ProjectHero = () => {
             <Content>
               <TopContent />
               <BottomContent>
-                <TextContent>
+                <TextContent onClick={() => handleProjectClick(currentProject)}>
                   <Title>{currentProject.title}</Title>
                   <Location>{currentProject.location}</Location>
                 </TextContent>
 
                 <NavigationDots>
                   {highlightedProjects.map((_, index) => (
-                    <Dot 
-                      key={index} 
+                    <Dot
+                      key={index}
                       active={index === currentIndex}
                       onClick={() => {
                         if (isAnimating) return;

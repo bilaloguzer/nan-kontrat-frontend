@@ -3,7 +3,9 @@
 // Colors remain the same
 export const colors = {
     brand: {
-      main: '#0047AB'
+      main: '#0047AB',
+      overlay: 'rgba(0, 61, 151, 0.95)'
+
     },
     text: {
       body: {
@@ -20,6 +22,10 @@ export const colors = {
     button: {
       active: "#F5F5F5",
       unactive: "rgba(245, 245, 245, 0.5)",
+    },
+    border: {
+      primary: "rgba(0, 0, 0, 0.1)",
+
     }
   };
   
