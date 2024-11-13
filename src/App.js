@@ -26,9 +26,6 @@ init('8orGvJGKVXnkERw1q');
 // Create a wrapper component for the Navbar
 const NavbarWrapper = () => {
   const location = useLocation();
-  const isProjectDetail = location.pathname.match(/^\/projects\/[^/]+$/);
-
-  
   return <Navbar />;
 };
 
@@ -46,7 +43,7 @@ const App = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "http://localhost:1337/api/projects?populate=*"
+        "http://145.223.116.223:1337/api/projects?populate=*"
       );
       if (!response.ok) {
         throw new Error("Failed to fetch projects");

@@ -66,6 +66,8 @@ const HomePage = ({ projects, isLoading }) => {
     );
   }
 
+
+
   const currentIndex = ((page % displayProjects.length) + displayProjects.length) % displayProjects.length;
   const currentProject = displayProjects[currentIndex];
 
@@ -95,6 +97,7 @@ const HomePage = ({ projects, isLoading }) => {
           >
             <ImageContainer>
               <HeroImage
+                
                 src={currentProject.getMainImageUrl()}
                 alt={currentProject.title}
                 onError={(e) => {

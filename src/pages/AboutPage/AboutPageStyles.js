@@ -1,42 +1,6 @@
 // components/AboutPage/styles.js
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import theme from "../../styles/theme";
-
-// // components/AboutPage/styles.js
-
-// // Page Structure
-// export const PageContainer = styled.div`...`;
-// export const HeroSection = styled.div`...`;
-// export const HeroImage = styled.img`...`;
-// export const HeroOverlay = styled.div`...`;
-// export const ContentSection = styled.div`...`;
-
-// // Typography
-// export const Title = styled.h1`...`;
-// export const AboutText = styled.p`...`;
-// export const DescriptionText = styled.p`...`;
-// export const SubTitle = styled.h2`...`;
-
-// // Services Section
-// export const ServicesGrid = styled.div`...`;
-// export const ServiceCard = styled.div`...`;
-// export const ServiceImage = styled.img`...`;
-// export const ServiceTitle = styled.h3`...`;
-
-// // Contact Section
-// export const ContactSection = styled.div`...`;
-// export const ContactGrid = styled.div`...`;
-// export const InfoColumn = styled.div`...`;
-// export const FormColumn = styled.div`...`;
-// export const ContactText = styled.p`...`;
-// export const InfoBlock = styled.div`...`;
-
-// // Form Elements
-// export const ContactForm = styled.form`...`;
-// export const FormInput = styled.input`...`;
-// export const FormTextArea = styled.textarea`...`;
-// export const SendButton = styled.button`...`;
 
 const BREAKPOINTS = {
   mobile: '480px',

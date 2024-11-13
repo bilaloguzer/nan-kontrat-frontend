@@ -11,8 +11,7 @@ import {
   ProjectLocation
 } from './ProjectsPageStyles';
 
- // ProjectsPage component
- const ProjectsPage = () => {
+const ProjectsPage = () => {
   const navigate = useNavigate();
   const { projects, loading, error } = useProjects();
 
@@ -20,8 +19,6 @@ import {
     console.log('Clicking project:', project);
     navigate(`/projects/${project.slug}`);
   };
-
-
 
   if (loading) return (
     <PageContainer>
@@ -45,10 +42,13 @@ import {
     </PageContainer>
   );
 
+  // Filter projects to only show ones where show is true
+  const visibleProjects = projects.filter(project => project.show === true);
+
   return (
     <PageContainer>
       <ProjectGrid>
-        {projects.map((project) => (
+        {visibleProjects.map((project) => (
           <ProjectCard 
             key={project.id} 
             onClick={() => handleProjectClick(project)}

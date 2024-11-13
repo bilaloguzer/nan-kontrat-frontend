@@ -3,7 +3,6 @@ import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useProjects } from '../hooks/useProjects';
 import ProjectDetailPage from '../pages/ProjectDetailPage/ProjectDetailPage';
-import ProjectBlogPage from '../pages/ProjectBlogPage/ProjectBlogPage';
 
 const ProjectRouter = () => {
   const { slug } = useParams();
@@ -19,8 +18,7 @@ const ProjectRouter = () => {
     return <Navigate to="/projects" />;
   }
 
-  return project.blog ? 
-    <ProjectBlogPage project={project} /> : 
-    <ProjectDetailPage project={project} />;
+  return  <ProjectDetailPage project={project} /> ;
+   
 };
 export default ProjectRouter;

@@ -14,7 +14,7 @@ export const useProjects = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:1337/api/projects?populate=*');
+        const response = await fetch('http://145.223.116.223:1337/api/projects?populate=*');
         
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
