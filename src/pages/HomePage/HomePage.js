@@ -44,9 +44,13 @@ const HomePage = ({ projects, isLoading }) => {
   const [[page, direction], setPage] = useState([0, 0]);
   const navigate = useNavigate();
 
-  const projectInstances = projects?.map(project => new Project(project)) || [];
-  const highlightedProjects = projectInstances.filter(project => project.highlight);
-  const displayProjects = highlightedProjects.length > 0 ? highlightedProjects : projectInstances;
+  const projectInstances =
+    projects?.map((project) => new Project(project)) || [];
+  const highlightedProjects = projectInstances.filter(
+    (project) => project.highlight
+  );
+  const displayProjects =
+    highlightedProjects.length > 0 ? highlightedProjects : projectInstances;
 
   useEffect(() => {
     let timer;
@@ -66,9 +70,9 @@ const HomePage = ({ projects, isLoading }) => {
     );
   }
 
-
-
-  const currentIndex = ((page % displayProjects.length) + displayProjects.length) % displayProjects.length;
+  const currentIndex =
+    ((page % displayProjects.length) + displayProjects.length) %
+    displayProjects.length;
   const currentProject = displayProjects[currentIndex];
 
   const handleProjectClick = (project) => {
@@ -83,6 +87,21 @@ const HomePage = ({ projects, isLoading }) => {
   return (
     <PageContainer>
       <HeroSection>
+        {/* Navigation Areas moved outside AnimatePresence */}
+        <MainContainer>
+          <NavArea side="left">
+            <NavButton onClick={() => paginate(-1)} disabled={isAnimating}>
+              <ArrowLeft />
+            </NavButton>
+          </NavArea>
+
+          <NavArea side="right">
+            <NavButton onClick={() => paginate(1)} disabled={isAnimating}>
+              <ArrowRight />
+            </NavButton>
+          </NavArea>
+        </MainContainer>
+        
         <AnimatePresence initial={false} custom={direction}>
           <SlideWrapper
             key={page}
@@ -97,7 +116,6 @@ const HomePage = ({ projects, isLoading }) => {
           >
             <ImageContainer>
               <HeroImage
-                
                 src={currentProject.getMainImageUrl()}
                 alt={currentProject.title}
                 onError={(e) => {
@@ -109,46 +127,34 @@ const HomePage = ({ projects, isLoading }) => {
             </ImageContainer>
 
             <MainContainer>
-              <NavArea side="left">
-                <NavButton onClick={() => paginate(-1)} disabled={isAnimating}>
-                  <ArrowLeft />
-                </NavButton>
-              </NavArea>
-
               <Content>
                 <TopContent />
                 <BottomContent>
-                  <TextContent onClick={() => handleProjectClick(currentProject)}>
+                  <TextContent
+                    onClick={() => handleProjectClick(currentProject)}
+                  >
                     <Title>{currentProject.title}</Title>
                     <Location>{currentProject.location}</Location>
                   </TextContent>
-
-                  <NavigationDots>
-                    {displayProjects.map((_, index) => (
-                      <Dot
-                        key={index}
-                        active={index === currentIndex}
-                        onClick={() => {
-                          if (isAnimating) return;
-                          const newDirection = index - currentIndex;
-                          setPage([index, Math.sign(newDirection)]);
-                        }}
-                      />
-                    ))}
-                  </NavigationDots>
                 </BottomContent>
               </Content>
-
-              <NavArea side="right">
-                <NavButton onClick={() => paginate(1)} disabled={isAnimating}>
-                  <ArrowRight />
-                </NavButton>
-              </NavArea>
             </MainContainer>
           </SlideWrapper>
+          <NavigationDots>
+          {displayProjects.map((_, index) => (
+            <Dot
+              key={index}
+              active={index === currentIndex}
+              onClick={() => {
+                if (isAnimating) return;
+                const newDirection = index - currentIndex;
+                setPage([index, Math.sign(newDirection)]);
+              }}
+            />
+          ))}
+        </NavigationDots>
         </AnimatePresence>
       </HeroSection>
-      {/* Add other homepage content here */}
     </PageContainer>
   );
 };

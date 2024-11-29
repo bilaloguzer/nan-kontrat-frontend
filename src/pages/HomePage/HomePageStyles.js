@@ -53,8 +53,8 @@ export const MainContainer = styled.div`
 
 export const Content = styled.div`
   position: absolute;
-  left: 192px;
-  right: 192px;
+  left: 8rem;
+  right: 8rem;
   top: 0;
   bottom: 0;
   display: flex;
@@ -82,8 +82,9 @@ export const Content = styled.div`
   }
 `;
 
+// Update the NavArea styled component
 export const NavArea = styled.div`
-  position: absolute;
+  position: fixed; // Change from absolute to fixed
   top: 0;
   ${(props) => (props.side === "left" ? "left: 0;" : "right: 0;")};
   width: 96px;
@@ -91,6 +92,7 @@ export const NavArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10; // Add z-index to ensure it stays above sliding content
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
     width: 48px;
@@ -162,18 +164,33 @@ export const Location = styled.div`
     font-size: 16px;
   }
 `;
-
 export const NavigationDots = styled.div`
+  position: absolute;
+  bottom: 96px;  // Matches Content's padding-bottom
+  right: 192px;  // Matches Content's right spacing
   display: flex;
   gap: 8px;
   z-index: 2;
   pointer-events: auto;
 
+  @media (max-width: ${BREAKPOINTS.laptop}) {
+    right: 96px;
+    bottom: 64px;
+    gap: 8px;
+  }
+
   @media (max-width: ${BREAKPOINTS.tablet}) {
+    right: 48px;
+    bottom: 48px;
+    gap: 6px;
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    right: 24px;
+    bottom: 32px;
     gap: 6px;
   }
 `;
-
 export const Dot = styled.div`
   width: ${(props) => (props.active ? "16px" : "8px")};
   height: 8px;

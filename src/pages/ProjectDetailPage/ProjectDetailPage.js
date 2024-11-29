@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft,ArrowRight } from "../../assets/icons";
-import { X, } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "../../assets/icons";
+import { useGesture } from "@use-gesture/react";
+import { X } from "lucide-react";
 import {
   DetailContainer,
   HeroSection,
@@ -23,16 +24,53 @@ import {
   ImageGrid,
   GridImage,
   GalleryImageContainer,
-  GalleryControls
+  GalleryControls,
+  ImageCounter,
+  NavArea,
 } from "./ProjectDetailPageStyles";
 
 const ProjectDetailPage = ({ project }) => {
   const navigate = useNavigate();
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const bind = useGesture(
+    {
+      onDrag: ({ movement: [mx], direction: [xDir], distance, cancel }) => {
+        if (distance > window.innerWidth * 0.15) {
+          // 15% of screen width threshold
+          if (xDir < 0) {
+            // Swipe left - next image
+            handleNextImage();
+          } else {
+            // Swipe right - previous image
+            handlePrevImage();
+          }
+          cancel();
+        }
+      },
+    },
+    {
+      drag: {
+        filterTaps: true,
+        threshold: 10,
+      },
+    }
+  );
+
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [galleryOpen]);
 
   if (!project) {
@@ -41,7 +79,6 @@ const ProjectDetailPage = ({ project }) => {
 
   // Collect all content images
   const getAllImages = () => {
-    // Get content images from description
     const contentImages = project.description
       .filter((item) => item.type === "image")
       .map((item) => ({
@@ -49,7 +86,6 @@ const ProjectDetailPage = ({ project }) => {
         alt: item.text || "Project image",
       }));
 
-    // Get project images
     const projectImages = project.projectImages
       ? project.projectImages.map((_, index) => ({
           url: project.getProjectImageUrl(index),
@@ -57,10 +93,8 @@ const ProjectDetailPage = ({ project }) => {
         }))
       : [];
 
-    // Combine all images and remove duplicates
     const allImages = [...contentImages, ...projectImages];
     const uniqueImages = allImages.reduce((unique, item) => {
-      // Check if this URL already exists in our unique array
       const exists = unique.some((img) => img.url === item.url);
       if (!exists) {
         unique.push(item);
@@ -107,14 +141,13 @@ const ProjectDetailPage = ({ project }) => {
         break;
     }
   };
-  console.log("IMAJ",allImages[currentImageIndex].url);
+
   return (
     <DetailContainer>
       <HeroSection>
         <HeroImage src={project.getMainImageUrl()} alt={project.title} />
         <HeroOverlay />
       </HeroSection>
-
       <ContentSection>
         <Title>{project.title}</Title>
         <Location>{project.summary}</Location>
@@ -166,13 +199,14 @@ const ProjectDetailPage = ({ project }) => {
             })()}
           </ContentBlock>
         ))}
+
         <ImageGridSection>
           <SubTitle>Project Gallery</SubTitle>
           <ImageGrid>
             {allImages.map((image, index) => (
               <GridImage
                 key={index}
-                src={`${image.url}`}
+                src={image.url}
                 alt={image.alt}
                 onClick={() => handleImageClick(index)}
               />
@@ -180,52 +214,46 @@ const ProjectDetailPage = ({ project }) => {
           </ImageGrid>
         </ImageGridSection>
       </ContentSection>
-
-      {/* Gallery Modal */}
       {galleryOpen && (
-  <ImageGallery onClick={() => setGalleryOpen(false)}>
-    <GalleryContent onClick={(e) => e.stopPropagation()}>
-      <GalleryImageContainer 
-        currentImage={`${allImages[currentImageIndex].url}`}
-      >
-        <GalleryImage
-          src={`${allImages[currentImageIndex].url}`}
-          alt={allImages[currentImageIndex].alt}
-        />
-        
-        {/* Desktop arrows */}
-        <div className="desktop-controls">
-          {allImages.length > 1 && (
-            <>
-              <GalleryButton className="prev" onClick={handlePrevImage}>
-                <ArrowLeft />
-              </GalleryButton>
-              <GalleryButton className="next" onClick={handleNextImage}>
-                <ArrowRight />
-              </GalleryButton>
-            </>
-          )}
-        </div>
-      </GalleryImageContainer>
+        <ImageGallery onClick={() => setGalleryOpen(false)} isMobile={isMobile}>
+          <GalleryContent onClick={(e) => e.stopPropagation()}>
+            <GalleryImageContainer {...(isMobile ? bind() : {})}>
+              <GalleryImage
+                src={allImages[currentImageIndex].url}
+                alt={allImages[currentImageIndex].alt}
+              />
 
-      {/* Mobile arrows */}
-      {allImages.length > 1 && (
-        <GalleryControls>
-          <GalleryButton onClick={handlePrevImage}>
-            <ArrowLeft />
-          </GalleryButton>
-          <GalleryButton onClick={handleNextImage}>
-            <ArrowRight />
-          </GalleryButton>
-        </GalleryControls>
+              {/* Show side arrows for both mobile and desktop */}
+              {allImages.length > 1 && (
+                <>
+                  <NavArea side="left">
+                    <GalleryButton onClick={handlePrevImage}>
+                      <ArrowLeft />
+                    </GalleryButton>
+                  </NavArea>
+
+                  <NavArea side="right">
+                    <GalleryButton onClick={handleNextImage}>
+                      <ArrowRight />
+                    </GalleryButton>
+                  </NavArea>
+                </>
+              )}
+
+              {/* Show counter for both mobile and desktop */}
+              {allImages.length > 1 && (
+                <ImageCounter>
+                  {currentImageIndex + 1} / {allImages.length}
+                </ImageCounter>
+              )}
+            </GalleryImageContainer>
+
+            <CloseButton onClick={() => setGalleryOpen(false)}>
+              <X size={24} />
+            </CloseButton>
+          </GalleryContent>
+        </ImageGallery>
       )}
-
-      <CloseButton onClick={() => setGalleryOpen(false)}>
-        <X size={24} />
-      </CloseButton>
-    </GalleryContent>
-  </ImageGallery>
-)}
     </DetailContainer>
   );
 };

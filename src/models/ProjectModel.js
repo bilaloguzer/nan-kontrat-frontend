@@ -46,6 +46,7 @@
 // }
 
 // export default Project;
+import { BASE_URL } from "../api/projectsApi";
 
 class Project {
   constructor(data) {
@@ -81,7 +82,7 @@ class Project {
       console.warn('No main image URL found for project:', this.title);
       return '/placeholder-image.jpg';
     }
-    return `http://145.223.116.223:1337${this.mainImage.url}`;
+    return `${BASE_URL}${this.mainImage.url}`;
   }
 
   getProjectImageUrl(index) {
@@ -90,7 +91,7 @@ class Project {
       console.warn(`No project image URL found at index ${index} for project:`, this.title);
       return '/placeholder-image.jpg';
     }
-    return `http://145.223.116.223:1337${image.url}`;
+    return `${BASE_URL}${image.url}`;
   }
 
   getTotalImages() {

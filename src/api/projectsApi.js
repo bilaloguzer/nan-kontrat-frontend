@@ -1,5 +1,6 @@
 // api/projectsApi.js
-const BASE_URL = 'http://145.223.116.223:1337';
+//export const BASE_URL = 'http://145.223.116.223:1337';
+export const BASE_URL = 'http://localhost:1337';
 
 export const projectsApi = {
   /**

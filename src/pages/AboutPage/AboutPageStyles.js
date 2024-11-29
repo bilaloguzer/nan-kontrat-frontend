@@ -40,7 +40,6 @@ export const ContentSection = styled.div`
   flex-direction: column;
   margin: 0 auto;
   padding: 6rem 2rem;
-  gap: 5rem;
 
   @media (max-width: ${BREAKPOINTS.laptop}) {
     max-width: 85%;
@@ -105,7 +104,7 @@ export const AboutText = styled.p`
 export const DescriptionText = styled.p`
   font-family: "Inter", sans-serif;
   font-size: 1.25rem;
-  margin: 0;
+  margin-bottom: 4rem;
   font-weight: 200;
   line-height: 225%;
   letter-spacing: normal;
@@ -121,7 +120,7 @@ export const ServicesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
-  margin-top: 4rem;
+  margin-top: 2rem;
 
   @media (max-width: ${BREAKPOINTS.laptop}) {
     grid-template-columns: repeat(3, 1fr);
@@ -151,6 +150,8 @@ export const ServiceCard = styled.div`
 
 export const ServiceTitle = styled.h3`
   font-family: "Poppins", sans-serif;
+  padding-top: 0;
+  margin-top: 0;
   font-size: 1.5rem;
   font-weight: 500;
   color: ${(props) => props.theme.colors.text.body.primary};
@@ -164,7 +165,7 @@ export const ContactGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
-  margin-top: 2rem;
+  margin-top: 6rem;
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
     grid-template-columns: 1fr;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjects } from '../../hooks/useProjects';
 import {
@@ -8,15 +8,48 @@ import {
   ProjectImage,
   ProjectInfo,
   ProjectTitle,
-  ProjectLocation
+  ProjectLocation,
+  PlaceholderImage
 } from './ProjectsPageStyles';
+
+const ProjectImageWithStates = ({ src, alt, ...props }) => {
+  const [imageStatus, setImageStatus] = useState('loading');
+
+  const getImageSource = () => {
+    switch (imageStatus) {
+      case 'loading':
+        return '/loading-placeholder.jpg';
+      case 'error':
+        return '/error-placeholder.jpg';
+      case 'loaded':
+        return src;
+      default:
+        return '/loading-placeholder.jpg';
+    }
+  };
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => setImageStatus('loaded');
+    img.onerror = () => setImageStatus('error');
+  }, [src]);
+
+  return (
+    <ProjectImage 
+      src={getImageSource()}
+      alt={alt}
+      loading="lazy"
+      {...props}
+    />
+  );
+};
 
 const ProjectsPage = () => {
   const navigate = useNavigate();
   const { projects, loading, error } = useProjects();
 
   const handleProjectClick = (project) => {
-    console.log('Clicking project:', project);
     navigate(`/projects/${project.slug}`);
   };
 
@@ -24,11 +57,15 @@ const ProjectsPage = () => {
     <PageContainer>
       <ProjectGrid>
         {[...Array(6)].map((_, index) => (
-          <ProjectCard key={index} style={{ opacity: 0.5 }}>
-            <div style={{ background: '#f0f0f0', aspectRatio: '4/3' }} />
+          <ProjectCard key={index} loading>
+            <PlaceholderImage />
             <ProjectInfo>
-              <div style={{ height: '20px', background: '#f0f0f0', marginBottom: '8px' }} />
-              <div style={{ height: '16px', background: '#f0f0f0', width: '60%' }} />
+              <ProjectTitle>
+                <PlaceholderImage style={{ height: '24px', width: '70%', marginBottom: '8px' }} />
+              </ProjectTitle>
+              <ProjectLocation>
+                <PlaceholderImage style={{ height: '16px', width: '40%' }} />
+              </ProjectLocation>
             </ProjectInfo>
           </ProjectCard>
         ))}
@@ -42,7 +79,6 @@ const ProjectsPage = () => {
     </PageContainer>
   );
 
-  // Filter projects to only show ones where show is true
   const visibleProjects = projects.filter(project => project.show === true);
 
   return (
@@ -53,12 +89,9 @@ const ProjectsPage = () => {
             key={project.id} 
             onClick={() => handleProjectClick(project)}
           >
-            <ProjectImage 
+            <ProjectImageWithStates 
               src={project.getMainImageUrl()} 
               alt={project.title || 'Project Image'} 
-              onError={(e) => {
-                e.target.src = '/placeholder-image.jpg';
-              }}
             />
             <ProjectInfo>
               <ProjectTitle>{project.title}</ProjectTitle>

@@ -142,152 +142,151 @@ export const SummaryGrid = styled.div`
     grid-template-columns: 1fr;
   }
 `;
-
-// Update these components in ProjectDetailPageStyles.js
+// Updated ImageGallery component
 export const ImageGallery = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); // For Safari
+  background-color: ${props => props.isMobile ? `${theme.colors.brand.overlay}` : 'black'};
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
+
+// Add a new component for the counter
+
 
 export const GalleryContent = styled.div`
   position: relative;
-  width: 90%;
-  height: 90%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  width: 100%;
+  height: 100vh;
 `;
 
 export const GalleryImageContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    background-color: transparent;
-    background-size: cover;
-    background-position: center;
-    filter: blur(20px);
-    opacity: 0.3;
-    z-index: -1;
+  touch-action: none; // Prevents default touch behaviors on mobile
+
+  @media (max-width: ${breakpoints.tablet}) {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      right: 16px;
+      transform: translateY(-50%);
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:active::after {
+      opacity: 1;
+    }
+  }
+`;
+
+export const GalleryImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  @media (max-width: ${breakpoints.tablet}) {
+    object-fit: contain;
   }
 `;
 
 
-export const GalleryControls = styled.div`
+export const NavArea = styled.div`
+  position: absolute;
+  top: 0;
+  ${(props) => (props.side === "left" ? "left: 0;" : "right: 0;")};
+  width: 96px;
+  height: 100%;
   display: flex;
-  gap: 2rem;
   align-items: center;
   justify-content: center;
-  margin-top: 0.5rem;
+  pointer-events: auto;
 
   @media (max-width: ${breakpoints.tablet}) {
-    margin-top: 1rem;
+    width: 48px;
+  }
+`;
+
+export const ImageCounter = styled.div`
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+  border-radius: 8px;
+  z-index: 1002;
+
+  @media (max-width: ${breakpoints.tablet}) {
+    bottom: 24px;
+  }
+`;
+
+// Remove or comment out GalleryControls since we won't use it anymore
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 32px; // Match navigation area spacing
+  right: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: white;
+  z-index: 1001;
+  width: 32px; // Set fixed width
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 24px;
+    height: 24px;
   }
 
-  @media (max-width: ${breakpoints.mobile}) {
-    margin-top: 0.5rem;
-    gap: 1rem;
+  @media (max-width: ${breakpoints.tablet}) {
+    top: 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 `;
 
 export const GalleryButton = styled.button`
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  &.prev {
-    left: 20px;
-  }
-
-  &.next {
-    right: 20px;
-  }
+  padding: 0;
+  color: white;
+  pointer-events: auto;
 
   svg {
     width: 64px;
     height: 64px;
-  }
 
-  @media (max-width: ${breakpoints.tablet}) {
-    width: 36px;
-    height: 36px;
-  }
-
-
-`;
-
-
-
-export const GalleryImage = styled.img`
-  max-width: 90%;
-  max-height: 90vh;
-  object-fit: contain;
-
-  @media (max-width: ${breakpoints.mobile}) {
-    max-width: 100%;
+    @media (max-width: ${breakpoints.tablet}) {
+      width: 32px;
+      height: 32px;
+    }
   }
 `;
 
-export const CloseButton = styled.button`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  @media (max-width: ${breakpoints.mobile}) {
-    width: 36px;
-    height: 36px;
-    top: 10px;
-    right: 10px;
-  }
-`;
 
 export const SummaryCell = styled.div`
   padding: 1rem;

@@ -4,6 +4,9 @@
 //       if (!data || typeof data !== 'object') {
 //         throw new Error('Invalid NAN data structure');
 //       }
+
+import { BASE_URL } from "../api/projectsApi";
+
   
 //       this.id = data.id;
 //       this.documentId = data.documentId;
@@ -115,20 +118,20 @@ class Nan {
       return '/placeholder-image.jpg';
     }
 
-    const baseUrl = 'http://145.223.116.223:1337'; // Update to match your API URL
+     // Update to match your API URL
 
     // If requesting original size
     if (size === 'original') {
-      return `${baseUrl}${this.factoryPhoto.url}`;
+      return `${BASE_URL}${this.factoryPhoto.url}`;
     }
 
     // If requesting a specific format (thumbnail, small, medium, large)
     if (this.factoryPhoto.formats && this.factoryPhoto.formats[size]) {
-      return `${baseUrl}${this.factoryPhoto.formats[size].url}`;
+      return `${BASE_URL}${this.factoryPhoto.formats[size].url}`;
     }
 
     // Fallback to original if requested size is not available
-    return `${baseUrl}${this.factoryPhoto.url}`;
+    return `${BASE_URL}${this.factoryPhoto.url}`;
   }
 
   getLogoUrl(size = 'original') {
@@ -137,17 +140,17 @@ class Nan {
       return '/placeholder-logo.png';
     }
 
-    const baseUrl = 'http://145.223.116.223:1337';
+    
 
     if (size === 'original') {
-      return `${baseUrl}${this.logo.url}`;
+      return `${BASE_URL}${this.logo.url}`;
     }
 
     if (this.logo.formats && this.logo.formats[size]) {
-      return `${baseUrl}${this.logo.formats[size].url}`;
+      return `${BASE_URL}${this.logo.formats[size].url}`;
     }
 
-    return `${baseUrl}${this.logo.url}`;
+    return `${BASE_URL}${this.logo.url}`;
   }
 
   getFormattedAbout() {

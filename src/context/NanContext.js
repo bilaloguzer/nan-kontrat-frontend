@@ -56,6 +56,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Nan from '../models/NanModel';
+import { BASE_URL } from '../api/projectsApi';
 
 const NanContext = createContext();
 
@@ -67,7 +68,7 @@ export const NanProvider = ({ children }) => {
   useEffect(() => {
     const fetchNan = async () => {
       try {
-        const response = await fetch('http://145.223.116.223:1337/api/nan?populate=*');
+        const response = await fetch(`${BASE_URL}/api/nan?populate=*`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch NAN info: ${response.status}`);

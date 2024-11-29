@@ -29,16 +29,27 @@ export const ProjectGrid = styled.div`
   }
 `;
 
+export const PlaceholderImage = styled.div`
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    ${theme.colors.surface.primary} 0%,
+    ${theme.colors.surface.secondary} 100%
+  );
+`;
+
+// Update the ProjectCard for loading state
 export const ProjectCard = styled.div`
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 2px;
-  cursor: pointer;
+  cursor: ${props => props.loading ? 'default' : 'pointer'};
   transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(1.05);
+    transform: ${props => props.loading ? 'none' : 'scale(1.05)'};
   }
 
   ${theme.media.up('md')} {

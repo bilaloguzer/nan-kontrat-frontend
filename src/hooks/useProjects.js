@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Project from '../models/ProjectModel';
+import { BASE_URL } from '../api/projectsApi';
 // hooks/useProjects.js
 export const useProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -14,7 +15,7 @@ export const useProjects = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://145.223.116.223:1337/api/projects?populate=*');
+        const response = await fetch(`${BASE_URL}/api/projects?populate=*`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch projects');

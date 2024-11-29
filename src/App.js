@@ -19,9 +19,9 @@ import { NanProvider } from "./context/NanContext";
 import { AboutProvider } from "./context/AboutContext";
 import HomePage from "./pages/HomePage/HomePage";
 // In your App.js or index.js
-import { init } from '@emailjs/browser';
-init('8orGvJGKVXnkERw1q');
-
+import { init } from "@emailjs/browser";
+import { BASE_URL } from "./api/projectsApi";
+init("8orGvJGKVXnkERw1q");
 
 // Create a wrapper component for the Navbar
 const NavbarWrapper = () => {
@@ -42,9 +42,7 @@ const App = () => {
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        "http://145.223.116.223:1337/api/projects?populate=*"
-      );
+      const response = await fetch(`${BASE_URL}/api/projects?populate=*`);
       if (!response.ok) {
         throw new Error("Failed to fetch projects");
       }
