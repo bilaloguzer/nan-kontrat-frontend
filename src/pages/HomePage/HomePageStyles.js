@@ -1,4 +1,3 @@
-// pages/HomePage/HomePageStyles.js
 import styled from "styled-components";
 import { motion } from "framer-motion";
 
@@ -25,12 +24,13 @@ export const HeroSection = styled.div`
 export const SlideWrapper = styled(motion.div)`
   position: absolute;
   inset: 0;
-  z-index: 1;
+  pointer-events: none;
 `;
 
 export const ImageContainer = styled.div`
   position: absolute;
   inset: 0;
+  pointer-events: none;
 `;
 
 export const HeroImage = styled.img`
@@ -43,12 +43,13 @@ export const Overlay = styled.div`
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  pointer-events: none;
 `;
 
 export const MainContainer = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+  position: relative;
+  height: 100%;
+  pointer-events: none;
 `;
 
 export const Content = styled.div`
@@ -61,7 +62,6 @@ export const Content = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   padding-bottom: 96px;
-  pointer-events: none;
 
   @media (max-width: ${BREAKPOINTS.laptop}) {
     left: 96px;
@@ -82,9 +82,8 @@ export const Content = styled.div`
   }
 `;
 
-// Update the NavArea styled component
 export const NavArea = styled.div`
-  position: fixed; // Change from absolute to fixed
+  position: fixed;
   top: 0;
   ${(props) => (props.side === "left" ? "left: 0;" : "right: 0;")};
   width: 96px;
@@ -92,7 +91,8 @@ export const NavArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10; // Add z-index to ensure it stays above sliding content
+  z-index: 10;
+  pointer-events: all;
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
     width: 48px;
@@ -101,12 +101,17 @@ export const NavArea = styled.div`
 
 export const TopContent = styled.div`
   margin-bottom: auto;
+  pointer-events: none;
 `;
 
 export const BottomContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  pointer-events: all;
+  cursor: pointer;
+  user-select: none;
+  z-index: 10;
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
     flex-direction: column;
@@ -119,64 +124,62 @@ export const TextContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  cursor: pointer;
-  pointer-events: auto;
 `;
 
 export const Title = styled.h1`
   font-family: "Poppins", sans-serif;
-  font-size: 96px;
+  font-size: 4rem;
   font-weight: 700;
   line-height: 1.1;
   color: white;
   margin: 0;
 
   @media (max-width: ${BREAKPOINTS.laptop}) {
-    font-size: 72px;
+    font-size: 3rem;
   }
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
-    font-size: 48px;
+    font-size: 2rem;
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
-    font-size: 36px;
+    font-size: 2rem;
   }
 `;
 
 export const Location = styled.div`
   font-family: "Inter", sans-serif;
-  font-size: 36px;
+  font-size: 1.5rem;
   font-weight: 400;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: white;
 
   @media (max-width: ${BREAKPOINTS.laptop}) {
-    font-size: 24px;
+    font-size: 1rem;
   }
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
-    font-size: 20px;
+    font-size: 0.75rem;
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
-    font-size: 16px;
+    font-size: 0.5rem;
   }
 `;
+
 export const NavigationDots = styled.div`
   position: absolute;
-  bottom: 96px;  // Matches Content's padding-bottom
-  right: 192px;  // Matches Content's right spacing
+  bottom: 96px;
+  right: 192px;
   display: flex;
   gap: 8px;
-  z-index: 2;
-  pointer-events: auto;
+  z-index: 10;
+  pointer-events: all;
 
   @media (max-width: ${BREAKPOINTS.laptop}) {
     right: 96px;
     bottom: 64px;
-    gap: 8px;
   }
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
@@ -188,9 +191,9 @@ export const NavigationDots = styled.div`
   @media (max-width: ${BREAKPOINTS.mobile}) {
     right: 24px;
     bottom: 32px;
-    gap: 6px;
   }
 `;
+
 export const Dot = styled.div`
   width: ${(props) => (props.active ? "16px" : "8px")};
   height: 8px;
@@ -198,6 +201,7 @@ export const Dot = styled.div`
   background-color: ${(props) =>
     props.active ? "white" : "rgba(255, 255, 255, 0.5)"};
   cursor: pointer;
+  transition: all 0.3s ease;
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
     width: ${(props) => (props.active ? "12px" : "6px")};
@@ -211,7 +215,6 @@ export const NavButton = styled.button`
   cursor: pointer;
   padding: 0;
   color: white;
-  pointer-events: auto;
 
   svg {
     width: 64px;

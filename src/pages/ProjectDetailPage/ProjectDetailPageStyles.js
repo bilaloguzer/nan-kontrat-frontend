@@ -425,16 +425,15 @@ export const ImageGrid = styled.div`
 
 export const GridImage = styled.img`
   width: 100%;
-  height: 300px;
+  height: 100%;
   object-fit: cover;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: opacity 0.3s ease;
+  background-color: ${props => props.isLoaded ? 'transparent' : '#e5e5e5'};
+  opacity: ${props => props.isLoaded ? 1 : 0};
 
   &:hover {
-    transform: scale(1.02);
-  }
-
-  @media (max-width: 768px) {
-    height: 200px;
+    opacity: 0.8;
   }
 `;
+

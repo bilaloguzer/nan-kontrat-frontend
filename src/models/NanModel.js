@@ -99,12 +99,16 @@ class Nan {
     this.worksAbout = attributes.worksAbout || '';
     this.companyEmail = attributes.companyEmail || '';
     this.phoneNumber = attributes.phoneNumber || '';
-    this.address = attributes.address || '';
     this.copyrightText = attributes.copyrightText || '';
     this.createdAt = attributes.createdAt;
     this.updatedAt = attributes.updatedAt;
     this.publishedAt = attributes.publishedAt;
     this.locale = attributes.locale;
+    this.factoryAdress = attributes.factoryAdress || '';
+    this.officeAdress = attributes.officeAdress || '';
+    this.xUrl = attributes.xUrl || '';
+    this.instagramUrl = attributes.instagramUrl || '';
+    this.linkedinUrl = attributes.linkedinUrl || '';
     
     // Handle nested image data
     this.factoryPhoto = attributes.factoryPhoto?.data?.attributes || attributes.factoryPhoto;
@@ -157,6 +161,12 @@ class Nan {
     if (!this.about) return [];
     return this.about.split(' ').filter(Boolean);
   }
+
+  getPhoneNumber() {
+    if (!this.phoneNumber) return [];
+    return this.phoneNumber.split(' ').filter(Boolean);
+  }
+
 
   getFormattedAddress() {
     if (!this.address) return [];

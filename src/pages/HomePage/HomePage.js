@@ -1,4 +1,3 @@
-// pages/HomePage/HomePage.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
@@ -27,16 +26,16 @@ import {
 const slideVariants = {
   enter: (direction) => ({
     x: direction > 0 ? "100%" : "-100%",
-    opacity: 1,
+    opacity: 0
   }),
   center: {
     x: 0,
-    opacity: 1,
+    opacity: 1
   },
   exit: (direction) => ({
     x: direction < 0 ? "100%" : "-100%",
-    opacity: 1,
-  }),
+    opacity: 0
+  })
 };
 
 const HomePage = ({ projects, isLoading }) => {
@@ -44,8 +43,7 @@ const HomePage = ({ projects, isLoading }) => {
   const [[page, direction], setPage] = useState([0, 0]);
   const navigate = useNavigate();
 
-  const projectInstances =
-    projects?.map((project) => new Project(project)) || [];
+  const projectInstances = projects?.map((project) => new Project(project)) || [];
   const highlightedProjects = projectInstances.filter(
     (project) => project.highlight
   );
@@ -75,8 +73,11 @@ const HomePage = ({ projects, isLoading }) => {
     displayProjects.length;
   const currentProject = displayProjects[currentIndex];
 
-  const handleProjectClick = (project) => {
-    navigate(`/projects/${project.slug}`);
+  const handleProjectClick = (e) => {
+    e.preventDefault();
+    if (!isAnimating) {
+      navigate(`/projects/${currentProject.slug}`);
+    }
   };
 
   const paginate = (newDirection) => {
@@ -87,7 +88,6 @@ const HomePage = ({ projects, isLoading }) => {
   return (
     <PageContainer>
       <HeroSection>
-        {/* Navigation Areas moved outside AnimatePresence */}
         <MainContainer>
           <NavArea side="left">
             <NavButton onClick={() => paginate(-1)} disabled={isAnimating}>
@@ -104,7 +104,7 @@ const HomePage = ({ projects, isLoading }) => {
         
         <AnimatePresence initial={false} custom={direction}>
           <SlideWrapper
-            key={page}
+            key={currentIndex}
             custom={direction}
             variants={slideVariants}
             initial="enter"
@@ -119,7 +119,6 @@ const HomePage = ({ projects, isLoading }) => {
                 src={currentProject.getMainImageUrl()}
                 alt={currentProject.title}
                 onError={(e) => {
-                  console.error("Failed to load image:", e.target.src);
                   e.target.src = "/placeholder-image.jpg";
                 }}
               />
@@ -129,10 +128,8 @@ const HomePage = ({ projects, isLoading }) => {
             <MainContainer>
               <Content>
                 <TopContent />
-                <BottomContent>
-                  <TextContent
-                    onClick={() => handleProjectClick(currentProject)}
-                  >
+                <BottomContent onClick={handleProjectClick}>
+                  <TextContent>
                     <Title>{currentProject.title}</Title>
                     <Location>{currentProject.location}</Location>
                   </TextContent>
@@ -140,7 +137,9 @@ const HomePage = ({ projects, isLoading }) => {
               </Content>
             </MainContainer>
           </SlideWrapper>
-          <NavigationDots>
+        </AnimatePresence>
+        
+        <NavigationDots>
           {displayProjects.map((_, index) => (
             <Dot
               key={index}
@@ -153,7 +152,6 @@ const HomePage = ({ projects, isLoading }) => {
             />
           ))}
         </NavigationDots>
-        </AnimatePresence>
       </HeroSection>
     </PageContainer>
   );

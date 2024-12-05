@@ -1,4 +1,3 @@
-// components/Navbar/index.js
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -21,24 +20,59 @@ import {
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
+  const [pressedSection, setPressedSection] = useState(null);
   const location = useLocation();
   const isProjectsPage = location.pathname === "/projects";
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+
+      if (location.pathname === '/about') {
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+          const contactPosition = contactSection.getBoundingClientRect();
+
+          // If there's a pressed section, only clear it when we reach the destination
+          if (pressedSection) {
+            if ((pressedSection === 'contact' && Math.abs(contactPosition.top) < 100) || 
+                (pressedSection === 'about' && window.scrollY < 100)) {
+              setPressedSection(null);
+            }
+            return;
+          }
+
+          // Determine active section based on contact section position
+          if (contactPosition.top <= window.innerHeight / 2) {
+            setActiveSection('contact');
+          } else {
+            setActiveSection('about');
+          }
+        }
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname, pressedSection]);
 
-  // Close drawer on route change
+  // Handle initial section and hash changes
+  useEffect(() => {
+    if (location.pathname === '/about') {
+      const initialSection = location.hash === '#contact' ? 'contact' : 'about';
+      setActiveSection(initialSection);
+      setPressedSection(initialSection);
+    } else {
+      setActiveSection(null);
+      setPressedSection(null);
+    }
+  }, [location]);
+
   useEffect(() => {
     setIsDrawerOpen(false);
   }, [location]);
 
-  // Lock body scroll when drawer is open
   useEffect(() => {
     if (isDrawerOpen) {
       document.body.style.overflow = 'hidden';
@@ -51,10 +85,22 @@ const Navbar = () => {
   }, [isDrawerOpen]);
 
   const isLinkActive = (path, hash = '') => {
-    if (hash) {
-      return location.pathname === path && location.hash === hash;
+    if (path !== '/about') {
+      return location.pathname === path;
     }
-    return location.pathname === path;
+
+    if (location.pathname !== '/about') return false;
+
+    // For About page sections
+    if (hash === '#contact') {
+      return pressedSection === 'contact' || (!pressedSection && activeSection === 'contact');
+    } else {
+      return pressedSection === 'about' || (!pressedSection && activeSection === 'about');
+    }
+  };
+
+  const handleNavClick = (section) => {
+    setPressedSection(section);
   };
 
   const NavContent = ({ isMobile }) => {
@@ -80,9 +126,10 @@ const Navbar = () => {
         </LinkComponent>
         <LinkComponent
           to="/about"
-          active={isLinkActive('/about', '#about') || isLinkActive('/about', '')}
+          active={isLinkActive('/about')}
           isProjectsPage={isProjectsPage}
           isScrolled={isScrolled}
+          onClick={() => handleNavClick('about')}
         >
           About
         </LinkComponent>
@@ -91,6 +138,7 @@ const Navbar = () => {
           active={isLinkActive('/about', '#contact')}
           isProjectsPage={isProjectsPage}
           isScrolled={isScrolled}
+          onClick={() => handleNavClick('contact')}
         >
           Contact
         </LinkComponent>

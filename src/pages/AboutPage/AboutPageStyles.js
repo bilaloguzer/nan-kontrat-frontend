@@ -39,29 +39,29 @@ export const ContentSection = styled.div`
   max-width: 75%;
   flex-direction: column;
   margin: 0 auto;
-  padding: 6rem 2rem;
+  padding: 3rem 2rem;
 
   @media (max-width: ${BREAKPOINTS.laptop}) {
     max-width: 85%;
-    padding: 4rem 2rem;
+    padding: 2rem 2rem;
   }
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
     max-width: 90%;
-    padding: 3rem 1.5rem;
-    gap: 3rem;
+    padding: 1rem 1.5rem;
+    gap: 1.5rem;
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
     max-width: 95%;
-    padding: 2rem 1rem;
-    gap: 2rem;
+    padding:  1rem;
+    gap: 1rem;
   }
 `;
 
 export const Title = styled.h1`
   font-family: "Poppins", sans-serif;
-  font-size: 6rem;
+  font-size: 4rem;
   font-weight: 700;
   line-height: normal;
   margin: 0;
@@ -352,5 +352,83 @@ export const FormMessage = styled.div`
   @media (max-width: ${ BREAKPOINTS.mobile}) {
     font-size: 0.75rem;
     padding: 0.5rem;
+  }
+`;
+
+export const SocialMediaSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4rem;
+  gap: 1rem;
+`;
+
+export const SocialMediaLinks = styled.div`
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+
+  a {
+    color: ${props => props.theme.colors.text.body.primary};
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: ${props => props.theme.colors.brand.main};
+    }
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    gap: 1.5rem;
+  }
+`;
+
+export const ContentBlock = styled.div`
+  font-family: "Poppins", sans-serif;
+  font-size: 1.2rem;
+  gap: 0.5rem;
+  font-weight: 400;
+  color: ${(props) => props.theme.colors.text.body.primary};
+  
+  div {
+    margin: 0.5rem 0;
+  }
+
+  div.quote {
+    margin: 2rem 20%;
+    padding-left: 2rem;
+    border-left: 2px solid #eee;
+    font-size: 1.5rem;
+    font-weight: 200;
+
+    @media (max-width: ${BREAKPOINTS.tablet}) {
+      margin: 2rem 10%;
+      font-size: 1.25rem;
+    }
+
+    @media (max-width: ${BREAKPOINTS.mobile}) {
+      margin: 2rem 5%;
+      font-size: 1.1rem;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  div.heading {
+    font-size: 1.5rem;
+
+    @media (max-width: ${BREAKPOINTS.mobile}) {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media (max-width: ${BREAKPOINTS.tablet}) {
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    font-size: 1rem;
   }
 `;

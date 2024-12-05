@@ -141,6 +141,57 @@ const ProjectDetailPage = ({ project }) => {
         break;
     }
   };
+  const summaryFields = [
+    { label: "", value: project.location },
+    {
+      label: "",
+      value:
+        project.startDate && project.finishDate
+          ? `${project.startDate.substring(
+              0,
+              4
+            )}-${project.finishDate.substring(0, 4)}`
+          : null,
+    },
+    { label: "Main Contractor", value: project.mainContractor },
+    { label: "Area", value: project.area },
+    { label: "Client", value: project.client },
+    { label: "Designer", value: project.designer },
+  ].filter((field) => field.value);
+
+  const GridImageWithStates = ({ src, alt, onClick, ...props }) => {
+    const [imageStatus, setImageStatus] = useState("loading");
+
+    const getImageSource = () => {
+      switch (imageStatus) {
+        case "loading":
+        case "error":
+          return null;
+        case "loaded":
+          return src;
+        default:
+          return null;
+      }
+    };
+
+    useEffect(() => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => setImageStatus("loaded");
+      img.onerror = () => setImageStatus("error");
+    }, [src]);
+
+    return (
+      <GridImage
+        src={getImageSource()}
+        alt={alt}
+        loading="eager"
+        isLoaded={imageStatus === "loaded"}
+        onClick={onClick}
+        {...props}
+      />
+    );
+  };
 
   return (
     <DetailContainer>
@@ -151,21 +202,22 @@ const ProjectDetailPage = ({ project }) => {
       <ContentSection>
         <Title>{project.title}</Title>
         <Location>{project.summary}</Location>
-        <SubTitle>Summary</SubTitle>
-        <SummaryGrid>
-          <SummaryCell>{project.location}</SummaryCell>
-          <SummaryCell>
-            {project.startDate.substring(0, 4) +
-              "-" +
-              project.finishDate.substring(0, 4) || "N/A"}
-          </SummaryCell>
-          <SummaryCell>Area</SummaryCell>
-          <SummaryCell>{project.area || "N/A"}</SummaryCell>
-          <SummaryCell>Client</SummaryCell>
-          <SummaryCell>{project.client || "N/A"}</SummaryCell>
-          <SummaryCell>Designer</SummaryCell>
-          <SummaryCell>{project.designer || "N/A"}</SummaryCell>
-        </SummaryGrid>
+        {summaryFields.length > 0 && (
+          <>
+            <SubTitle>Summary</SubTitle>
+            <SummaryGrid>
+              {summaryFields.map(
+                (field, index) =>
+                  field.value && (
+                    <React.Fragment key={index}>
+                      {field.label && <SummaryCell>{field.label}</SummaryCell>}
+                      <SummaryCell>{field.value}</SummaryCell>
+                    </React.Fragment>
+                  )
+              )}
+            </SummaryGrid>
+          </>
+        )}
 
         {project.description.map((item, index) => (
           <ContentBlock key={index}>
@@ -204,7 +256,7 @@ const ProjectDetailPage = ({ project }) => {
           <SubTitle>Project Gallery</SubTitle>
           <ImageGrid>
             {allImages.map((image, index) => (
-              <GridImage
+              <GridImageWithStates
                 key={index}
                 src={image.url}
                 alt={image.alt}
