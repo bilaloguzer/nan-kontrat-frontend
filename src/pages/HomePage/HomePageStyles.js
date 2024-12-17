@@ -94,6 +94,10 @@ export const NavArea = styled.div`
   z-index: 10;
   pointer-events: all;
 
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    display: none;  // Hide arrows on mobile
+  }
+
   @media (max-width: ${BREAKPOINTS.tablet}) {
     width: 48px;
   }
@@ -139,11 +143,11 @@ export const Title = styled.h1`
   }
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
-    font-size: 2rem;
+    font-size: 1.8rem;  // Adjust font size for mobile
   }
 `;
 
@@ -160,11 +164,11 @@ export const Location = styled.div`
   }
 
   @media (max-width: ${BREAKPOINTS.tablet}) {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
-    font-size: 0.5rem;
+    font-size: 0.75rem;  // Adjust font size for mobile
   }
 `;
 
@@ -223,6 +227,11 @@ export const NavButton = styled.button`
     @media (max-width: ${BREAKPOINTS.tablet}) {
       width: 32px;
       height: 32px;
+    }
+
+    @media (max-width: ${BREAKPOINTS.mobile}) {
+      width: 24px;
+      height: 24px;  // Smaller arrows for mobile
     }
   }
 `;

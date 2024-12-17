@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { useSwipeable } from "react-swipeable"; // Import here
 import Project from "../../models/ProjectModel";
 import { ArrowLeft, ArrowRight } from "../../assets/icons";
 import {
@@ -59,6 +60,13 @@ const HomePage = ({ projects, isLoading }) => {
     }
     return () => clearInterval(timer);
   }, [page, isLoading, displayProjects.length]);
+    // Swipeable settings for mobile swipe (placed unconditionally)
+    const handlers = useSwipeable({
+      onSwipedLeft: () => paginate(1),
+      onSwipedRight: () => paginate(-1),
+      preventDefaultTouchmoveEvent: true,  // Prevents page from scrolling while swiping
+      trackMouse: true,  // Optional: Allows swipe detection with mouse as well
+    });
 
   if (isLoading) {
     return (
@@ -83,11 +91,14 @@ const HomePage = ({ projects, isLoading }) => {
   const paginate = (newDirection) => {
     if (isAnimating) return;
     setPage([page + newDirection, newDirection]);
+    setIsAnimating(true);
   };
+
+
 
   return (
     <PageContainer>
-      <HeroSection>
+      <HeroSection {...handlers}>
         <MainContainer>
           <NavArea side="left">
             <NavButton onClick={() => paginate(-1)} disabled={isAnimating}>
@@ -101,7 +112,7 @@ const HomePage = ({ projects, isLoading }) => {
             </NavButton>
           </NavArea>
         </MainContainer>
-        
+
         <AnimatePresence initial={false} custom={direction}>
           <SlideWrapper
             key={currentIndex}
@@ -138,7 +149,7 @@ const HomePage = ({ projects, isLoading }) => {
             </MainContainer>
           </SlideWrapper>
         </AnimatePresence>
-        
+
         <NavigationDots>
           {displayProjects.map((_, index) => (
             <Dot

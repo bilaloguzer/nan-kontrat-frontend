@@ -1,47 +1,4 @@
-// // models/Work.js
-//   class Work {
-//     constructor(data) {
-//       if (!data || typeof data !== 'object') {
-//         throw new Error('Invalid work data');
-//       }
-
-//       console.log("data",data)
-  
-//       this.id = data.id;
-//       this.documentId = data.documentId;
-//       this.title = data.title || 'Untitled Work';
-//       this.description = data.description || '';
-//       this.slug = data.slug || '';
-//       this.workImage = data.workImage;
-//     }
-  
-//     getFormattedDescription() {
-//       return this.description.split('\n').filter(Boolean);
-//     }
-//     getWorksImagesUrl(size = 'large') {
-//       // if (!this.workImage) {
-//       //   return '/placeholder-image.jpg';
-//       // }
-  
-//       // If requesting original size
-      
-//       console.log("deb-u-g--" ,this.workImage);
-
-//       if (size === 'original') {
-//         return `http://localhost:1337${this.workImage[0].url}`;
-//       }
-  
-//       // If requesting a specific format (thumbnail, small, medium, large)
-//       if (this.workImage.formats && this.workImage.formats[size]) {
-//         return `http://localhost:1337${this.workImage.formats[size].url}`;
-//       }
-  
-//       // Fallback to original if requested size is not available
-//       return `http://localhost:1337${this.workImage.url}`;
-//     }
-//   }
-//   export default Work;
-  
+import { BASE_URL } from "../api/projectsApi";
 class Work {
   constructor(data) {
     if (!data || typeof data !== 'object') {
@@ -84,20 +41,20 @@ class Work {
       return '/placeholder-image.jpg';
     }
 
-    const baseUrl = 'http://145.223.116.223:1337';
+    
 
     // If requesting original size
     if (size === 'original') {
-      return `${baseUrl}${this.workImage.url}`;
+      return `${BASE_URL}${this.workImage.url}`;
     }
 
     // If requesting a specific format (thumbnail, small, medium, large)
     if (this.workImage.formats && this.workImage.formats[size]) {
-      return `${baseUrl}${this.workImage.formats[size].url}`;
+      return `${BASE_URL}${this.workImage.formats[size].url}`;
     }
 
     // Fallback to original if requested size is not available
-    return `${baseUrl}${this.workImage.url}`;
+    return `${BASE_URL}${this.workImage.url}`;
   }
 
   getImageDimensions(size = 'large') {

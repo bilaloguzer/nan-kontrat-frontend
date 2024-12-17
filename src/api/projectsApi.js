@@ -1,6 +1,8 @@
 // api/projectsApi.js
-export const BASE_URL = 'http://145.223.116.223:1337';
-//ßexport const BASE_URL = 'http://localhost:1337';
+export const BASE_URL = 'https://nankontrat.com';
+//export const BASE_URL = 'http://145.223.116.223:1337';
+//export const BASE_URL = '';
+
 
 export const projectsApi = {
   /**
