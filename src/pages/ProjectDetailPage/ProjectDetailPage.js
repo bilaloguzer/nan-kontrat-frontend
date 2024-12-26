@@ -25,6 +25,7 @@ import {
   GridImage,
   GalleryImageContainer,
   GalleryControls,
+  GridImageWrapper,
   ImageCounter,
   NavArea,
 } from "./ProjectDetailPageStyles";
@@ -33,18 +34,28 @@ const ProjectDetailPage = ({ project }) => {
   const navigate = useNavigate();
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [scale, setScale] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [imageOrientation, setImageOrientation] = useState(null);
+
+  const checkImageOrientation = (imageUrl) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const isHorizontal = img.width > img.height;
+        resolve(isHorizontal);
+      };
+      img.src = imageUrl;
+    });
+  };
 
   const bind = useGesture(
     {
       onDrag: ({ movement: [mx], direction: [xDir], distance, cancel }) => {
         if (distance > window.innerWidth * 0.15) {
-          // 15% of screen width threshold
           if (xDir < 0) {
-            // Swipe left - next image
             handleNextImage();
           } else {
-            // Swipe right - previous image
             handlePrevImage();
           }
           cancel();
@@ -71,13 +82,22 @@ const ProjectDetailPage = ({ project }) => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [galleryOpen]);
+  }, []);
+
+  useEffect(() => {
+    if (galleryOpen && allImages?.[currentImageIndex]) {
+      checkImageOrientation(allImages[currentImageIndex].url)
+        .then(isHorizontal => {
+          setImageOrientation(isHorizontal);
+          setScale(1);
+        });
+    }
+  }, [currentImageIndex, galleryOpen]);
 
   if (!project) {
     return navigate("/projects");
   }
 
-  // Collect all content images
   const getAllImages = () => {
     const contentImages = project.description
       .filter((item) => item.type === "image")
@@ -141,16 +161,50 @@ const ProjectDetailPage = ({ project }) => {
         break;
     }
   };
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      e.currentTarget.dataset.initialPinchDistance = distance;
+      e.currentTarget.dataset.initialScale = scale;
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 2) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      const initialDistance = parseFloat(e.currentTarget.dataset.initialPinchDistance);
+      const initialScale = parseFloat(e.currentTarget.dataset.initialScale);
+      
+      if (initialDistance && initialScale) {
+        const newScale = (distance / initialDistance) * initialScale;
+        const maxScale = imageOrientation ? 3 : 4;
+        setScale(Math.min(Math.max(1, newScale), maxScale));
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setScale(1);
+  };
+
   const summaryFields = [
     { label: "", value: project.location },
     {
       label: "",
       value:
         project.startDate && project.finishDate
-          ? `${project.startDate.substring(
-              0,
-              4
-            )}-${project.finishDate.substring(0, 4)}`
+          ? `${project.startDate.substring(0, 4)}-${project.finishDate.substring(0, 4)}`
           : null,
     },
     { label: "Main Contractor", value: project.mainContractor },
@@ -162,18 +216,6 @@ const ProjectDetailPage = ({ project }) => {
   const GridImageWithStates = ({ src, alt, onClick, ...props }) => {
     const [imageStatus, setImageStatus] = useState("loading");
 
-    const getImageSource = () => {
-      switch (imageStatus) {
-        case "loading":
-        case "error":
-          return null;
-        case "loaded":
-          return src;
-        default:
-          return null;
-      }
-    };
-
     useEffect(() => {
       const img = new Image();
       img.src = src;
@@ -182,14 +224,16 @@ const ProjectDetailPage = ({ project }) => {
     }, [src]);
 
     return (
-      <GridImage
-        src={getImageSource()}
-        alt={alt}
-        loading="eager"
-        isLoaded={imageStatus === "loaded"}
-        onClick={onClick}
-        {...props}
-      />
+      <GridImageWrapper>
+        <GridImage
+          src={imageStatus === "loaded" ? src : null}
+          alt={alt}
+          loading="eager"
+          isLoaded={imageStatus === "loaded"}
+          onClick={onClick}
+          {...props}
+        />
+      </GridImageWrapper>
     );
   };
 
@@ -266,16 +310,23 @@ const ProjectDetailPage = ({ project }) => {
           </ImageGrid>
         </ImageGridSection>
       </ContentSection>
+
       {galleryOpen && (
         <ImageGallery onClick={() => setGalleryOpen(false)} isMobile={isMobile}>
           <GalleryContent onClick={(e) => e.stopPropagation()}>
-            <GalleryImageContainer {...(isMobile ? bind() : {})}>
+            <GalleryImageContainer
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              {...(isMobile ? bind() : {})}
+            >
               <GalleryImage
                 src={allImages[currentImageIndex].url}
                 alt={allImages[currentImageIndex].alt}
+                scale={scale}
+                isHorizontal={imageOrientation}
               />
 
-              {/* Show side arrows for both mobile and desktop */}
               {allImages.length > 1 && (
                 <>
                   <NavArea side="left">
@@ -292,7 +343,6 @@ const ProjectDetailPage = ({ project }) => {
                 </>
               )}
 
-              {/* Show counter for both mobile and desktop */}
               {allImages.length > 1 && (
                 <ImageCounter>
                   {currentImageIndex + 1} / {allImages.length}

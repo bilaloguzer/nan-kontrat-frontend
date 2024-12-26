@@ -26,11 +26,9 @@ export const NanProvider = ({ children }) => {
           throw new Error('Invalid API response structure');
         }
 
-        console.log('Raw NAN data:', result.data); // Debug log
 
         try {
           const nanInstance = new Nan(result.data);
-          console.log('Processed NAN instance:', nanInstance); // Debug log
           setNan(nanInstance);
           setError(null);
         } catch (err) {

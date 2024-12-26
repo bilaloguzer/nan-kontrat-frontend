@@ -162,43 +162,6 @@ export const GalleryContent = styled.div`
   height: 100vh;
 `;
 
-export const GalleryImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  touch-action: none; // Prevents default touch behaviors on mobile
-
-  @media (max-width: ${breakpoints.tablet}) {
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 16px;
-      right: 16px;
-      transform: translateY(-50%);
-      height: 2px;
-      background: rgba(255, 255, 255, 0.1);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    &:active::after {
-      opacity: 1;
-    }
-  }
-`;
-
-export const GalleryImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  @media (max-width: ${breakpoints.tablet}) {
-    object-fit: contain;
-  }
-`;
-
-
 export const NavArea = styled.div`
   position: absolute;
   top: 0;
@@ -412,28 +375,81 @@ export const ImageGridSection = styled.div`
   margin-top: 4rem;
 `;
 
+
+// Update the ImageGrid component to maintain 3:4 aspect ratio
 export const ImageGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   margin-top: 1rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: ${breakpoints.tablet}) {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 `;
 
+export const GridImageWrapper = styled.div`
+  position: relative;
+  padding-top: 75%; // This creates a 3:4 aspect ratio (4/3 * 100)
+  width: 100%;
+  background-color: #e5e5e5;
+`;
+
 export const GridImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   cursor: pointer;
   transition: opacity 0.3s ease;
-  background-color: ${props => props.isLoaded ? 'transparent' : '#e5e5e5'};
   opacity: ${props => props.isLoaded ? 1 : 0};
 
   &:hover {
     opacity: 0.8;
   }
 `;
+
+// Update GalleryImageContainer to support pinch zoom
+export const GalleryImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color:${(props) => props.theme.colors.brand.overlay};
+
+  @media (max-width: ${breakpoints.tablet}) {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      right: 16px;
+      transform: translateY(-50%);
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:active::after {
+      opacity: 1;
+    }
+  }
+`;
+export const GalleryImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  @media (max-width: ${breakpoints.tablet}) {
+    object-fit: contain;
+  }
+`;
+
 

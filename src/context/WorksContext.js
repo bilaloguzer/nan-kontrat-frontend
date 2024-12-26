@@ -26,7 +26,6 @@ export const WorksProvider = ({ children }) => {
           throw new Error("Invalid API response structure");
         }
 
-        console.log("Raw works data:", result.data); // Debug log
 
         if (isMounted) {
           const transformedWorks = result.data
@@ -40,7 +39,6 @@ export const WorksProvider = ({ children }) => {
             })
             .filter(Boolean);
 
-          console.log("Transformed works:", transformedWorks); // Debug log
           setWorks(transformedWorks);
           setError(null);
         }

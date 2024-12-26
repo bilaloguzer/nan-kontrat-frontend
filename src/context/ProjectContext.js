@@ -31,13 +31,12 @@ export const ProjectProvider = ({ children }) => {
               try {
                 return new Project(projectData);
               } catch (err) {
-                console.error('Failed to create project:', err, projectData);
+                console.error('Failed to create project:', err);
                 return null;
               }
             })
             .filter(Boolean);
           
-          console.log('Transformed projects:', transformedProjects);
           setProjects(transformedProjects);
           setError(null);
         }

@@ -22,7 +22,6 @@ export const useProjects = () => {
         }
         
         const data = await response.json();
-        console.log('Raw API response:', data);
         
         
         // Transform and validate data
