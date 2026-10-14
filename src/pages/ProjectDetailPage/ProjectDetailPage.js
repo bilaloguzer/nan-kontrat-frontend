@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "../../assets/icons";
 import { useGesture } from "@use-gesture/react";
 import { X } from "lucide-react";
+import { getImageUrl, getImageSrcSet } from "../../utils/imageUrl";
 import {
   DetailContainer,
   HeroSection,
@@ -102,13 +103,17 @@ const ProjectDetailPage = ({ project }) => {
     const contentImages = project.description
       .filter((item) => item.type === "image")
       .map((item) => ({
-        url: item.image.url,
+        url: getImageUrl(item.image, "original"),
+        src: getImageUrl(item.image, "large"),
+        srcSet: getImageSrcSet(item.image),
         alt: item.text || "Project image",
       }));
 
     const projectImages = project.projectImages
       ? project.projectImages.map((_, index) => ({
-          url: project.getProjectImageUrl(index),
+          url: project.getProjectImageUrl(index, "original"),
+          src: project.getProjectImageUrl(index, "large"),
+          srcSet: project.getProjectImageSrcSet(index),
           alt: `Project image ${index + 1}`,
         }))
       : [];
@@ -213,20 +218,26 @@ const ProjectDetailPage = ({ project }) => {
     { label: "Designer", value: project.designer },
   ].filter((field) => field.value);
 
-  const GridImageWithStates = ({ src, alt, onClick, ...props }) => {
+  const GridImageWithStates = ({ src, srcSet, sizes, alt, onClick, ...props }) => {
     const [imageStatus, setImageStatus] = useState("loading");
 
     useEffect(() => {
       const img = new Image();
+      if (srcSet) {
+        img.srcset = srcSet;
+        img.sizes = sizes || "";
+      }
       img.src = src;
       img.onload = () => setImageStatus("loaded");
       img.onerror = () => setImageStatus("error");
-    }, [src]);
+    }, [src, srcSet, sizes]);
 
     return (
       <GridImageWrapper>
         <GridImage
           src={imageStatus === "loaded" ? src : null}
+          srcSet={imageStatus === "loaded" ? srcSet : undefined}
+          sizes={sizes}
           alt={alt}
           loading="eager"
           isLoaded={imageStatus === "loaded"}
@@ -240,7 +251,12 @@ const ProjectDetailPage = ({ project }) => {
   return (
     <DetailContainer>
       <HeroSection>
-        <HeroImage src={project.getMainImageUrl()} alt={project.title} />
+        <HeroImage
+          src={project.getMainImageUrl()}
+          srcSet={project.getMainImageSrcSet()}
+          sizes="100vw"
+          alt={project.title}
+        />
         <HeroOverlay />
       </HeroSection>
       <ContentSection>
@@ -268,7 +284,7 @@ const ProjectDetailPage = ({ project }) => {
             {(() => {
               switch (item.type) {
                 case "image":
-                  const imageUrl = item.image.url;
+                  const imageUrl = getImageUrl(item.image, "original");
                   const imageIndex = allImages.findIndex(
                     (img) => img.url === imageUrl
                   );
@@ -279,7 +295,9 @@ const ProjectDetailPage = ({ project }) => {
                       style={{ cursor: "pointer" }}
                     >
                       <img
-                        src={item.image.url}
+                        src={getImageUrl(item.image, "large")}
+                        srcSet={getImageSrcSet(item.image)}
+                        sizes="(max-width: 768px) 100vw, 960px"
                         alt={item.text || "Project image"}
                       />
                     </div>
@@ -302,7 +320,9 @@ const ProjectDetailPage = ({ project }) => {
             {allImages.map((image, index) => (
               <GridImageWithStates
                 key={index}
-                src={image.url}
+                src={image.src}
+                srcSet={image.srcSet}
+                sizes="50vw"
                 alt={image.alt}
                 onClick={() => handleImageClick(index)}
               />

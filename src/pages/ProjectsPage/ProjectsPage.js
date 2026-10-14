@@ -16,7 +16,7 @@ import {
   
 } from './ProjectsPageStyles';
 
-const ProjectImageWithStates = ({ src, alt, onLoad, ...props }) => {
+const ProjectImageWithStates = ({ src, srcSet, sizes, alt, onLoad, ...props }) => {
   const [imageStatus, setImageStatus] = useState('loading');
 
   const getImageSource = () => {
@@ -33,17 +33,23 @@ const ProjectImageWithStates = ({ src, alt, onLoad, ...props }) => {
 
   useEffect(() => {
     const img = new Image();
+    if (srcSet) {
+      img.srcset = srcSet;
+      img.sizes = sizes || '';
+    }
     img.src = src;
     img.onload = () => {
       setImageStatus('loaded');
       onLoad?.();
     };
     img.onerror = () => setImageStatus('error');
-  }, [src, onLoad]);
+  }, [src, srcSet, sizes, onLoad]);
 
   return (
     <ProjectImage 
       src={getImageSource()}
+      srcSet={imageStatus === 'loaded' ? srcSet : undefined}
+      sizes={sizes}
       alt={alt}
       loading="eager"
       isLoaded={imageStatus === 'loaded'}
@@ -58,7 +64,9 @@ const SingleProjectCard = ({ project, onClick }) => {
   return (
     <ProjectCard onClick={onClick}>
       <ProjectImageWithStates 
-        src={project.getMainImageUrl()} 
+        src={project.getMainImageUrl()}
+        srcSet={project.getMainImageSrcSet()}
+        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
         alt={project.title || 'Project Image'}
         onLoad={() => setIsImageLoaded(true)}
       />

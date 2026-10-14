@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { useSwipeable } from "react-swipeable"; // Import here
 import Project from "../../models/ProjectModel";
+import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
+import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { ArrowLeft, ArrowRight } from "../../assets/icons";
 import {
   PageContainer,
@@ -43,6 +45,7 @@ const HomePage = ({ projects, isLoading }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [[page, direction], setPage] = useState([0, 0]);
   const navigate = useNavigate();
+  const showLoader = useMinimumLoading(isLoading);
 
   const projectInstances = projects?.map((project) => new Project(project)) || [];
   const highlightedProjects = projectInstances.filter(
@@ -68,12 +71,8 @@ const HomePage = ({ projects, isLoading }) => {
       trackMouse: true,  // Optional: Allows swipe detection with mouse as well
     });
 
-  if (isLoading) {
-    return (
-      <PageContainer>
-        <div>Loading...</div>
-      </PageContainer>
-    );
+  if (showLoader) {
+    return <LoadingScreen />;
   }
 
   const currentIndex =
@@ -128,6 +127,8 @@ const HomePage = ({ projects, isLoading }) => {
             <ImageContainer>
               <HeroImage
                 src={currentProject.getMainImageUrl()}
+                srcSet={currentProject.getMainImageSrcSet()}
+                sizes="100vw"
                 alt={currentProject.title}
                 onError={(e) => {
                   e.target.src = "/placeholder-image.jpg";

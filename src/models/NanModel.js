@@ -1,4 +1,5 @@
-import { BASE_URL } from "../api/projectsApi";  
+import { BASE_URL } from "../api/projectsApi";
+import { getImageUrl, getImageSrcSet } from "../utils/imageUrl";
 class Nan {
   constructor(data) {
     if (!data || typeof data !== 'object') {
@@ -36,23 +37,12 @@ class Nan {
   getNanImagesUrl(size = 'large') {
     if (!this.factoryPhoto) {
       console.warn('No factory photo available');
-      return '/placeholder-image.jpg';
     }
+    return getImageUrl(this.factoryPhoto, size);
+  }
 
-     // Update to match your API URL
-
-    // If requesting original size
-    if (size === 'original') {
-      return `${BASE_URL}${this.factoryPhoto.url}`;
-    }
-
-    // If requesting a specific format (thumbnail, small, medium, large)
-    if (this.factoryPhoto.formats && this.factoryPhoto.formats[size]) {
-      return `${BASE_URL}${this.factoryPhoto.formats[size].url}`;
-    }
-
-    // Fallback to original if requested size is not available
-    return `${BASE_URL}${this.factoryPhoto.url}`;
+  getNanImageSrcSet() {
+    return getImageSrcSet(this.factoryPhoto);
   }
 
   getLogoUrl(size = 'original') {

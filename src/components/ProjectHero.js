@@ -202,6 +202,8 @@ const ProjectHero = () => {
           <ImageContainer>
             <HeroImage
               src={currentProject.getMainImageUrl()}
+              srcSet={currentProject.getMainImageSrcSet()}
+              sizes="100vw"
               alt={currentProject.title}
               onError={(e) => {
                 console.error("Failed to load image:", e.target.src);

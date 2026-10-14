@@ -1,4 +1,5 @@
 import { BASE_URL } from "../api/projectsApi";
+import { getImageUrl, getImageSrcSet } from "../utils/imageUrl";
 class Work {
   constructor(data) {
     if (!data || typeof data !== 'object') {
@@ -38,23 +39,12 @@ class Work {
   getWorksImagesUrl(size = 'large') {
     if (!this.workImage) {
       console.warn('No work image available for:', this.title);
-      return '/placeholder-image.jpg';
     }
+    return getImageUrl(this.workImage, size);
+  }
 
-    
-
-    // If requesting original size
-    if (size === 'original') {
-      return `${BASE_URL}${this.workImage.url}`;
-    }
-
-    // If requesting a specific format (thumbnail, small, medium, large)
-    if (this.workImage.formats && this.workImage.formats[size]) {
-      return `${BASE_URL}${this.workImage.formats[size].url}`;
-    }
-
-    // Fallback to original if requested size is not available
-    return `${BASE_URL}${this.workImage.url}`;
+  getWorkImageSrcSet() {
+    return getImageSrcSet(this.workImage);
   }
 
   getImageDimensions(size = 'large') {

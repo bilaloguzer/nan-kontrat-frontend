@@ -32,7 +32,8 @@ import {
 } from "./AboutPageStyles";
 
 const AboutPage = ({ nan, works }) => {
-  const heroImageSrc = nan?.getNanImagesUrl("original");
+  const heroImageSrc = nan?.getNanImagesUrl("large");
+  const heroImageSrcSet = nan?.getNanImageSrcSet();
   const formRef = useRef(null);
   const contactRef = useRef(null);
 
@@ -92,7 +93,7 @@ const AboutPage = ({ nan, works }) => {
   return (
     <PageContainer>
       <HeroSection>
-        <HeroImage src={heroImageSrc} alt="About NAN" />
+        <HeroImage src={heroImageSrc} srcSet={heroImageSrcSet} sizes="100vw" alt="About NAN" />
         <HeroOverlay />
       </HeroSection>
 
@@ -109,7 +110,12 @@ const AboutPage = ({ nan, works }) => {
         <ServicesGrid>
           {works?.map((work, index) => (
             <ServiceCard key={work.id || index}>
-              <ServiceImage src={work.getWorksImagesUrl("original")} />
+              <ServiceImage
+                src={work.getWorksImagesUrl("medium")}
+                srcSet={work.getWorkImageSrcSet()}
+                sizes="(max-width: 768px) 50vw, 25vw"
+                alt={work.title}
+              />
               <ServiceTitle>{work.title}</ServiceTitle>
             </ServiceCard>
           ))}

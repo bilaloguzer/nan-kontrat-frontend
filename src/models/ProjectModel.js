@@ -1,5 +1,5 @@
 
-import { BASE_URL } from "../api/projectsApi";
+import { getImageUrl, getImageSrcSet, PLACEHOLDER_IMAGE } from "../utils/imageUrl";
 
 class Project {
   constructor(data) {
@@ -54,24 +54,32 @@ class Project {
     return this.works.map((work) => work.title);
   }
 
-  getMainImageUrl() {
+  getMainImageUrl(size = "large") {
     if (!this.mainImage?.url) {
       console.warn("No main image URL found for project:", this.title);
-      return "/placeholder-image.jpg";
+      return PLACEHOLDER_IMAGE;
     }
-    return `${BASE_URL}${this.mainImage.url}`;
+    return getImageUrl(this.mainImage, size);
   }
 
-  getProjectImageUrl(index) {
+  getMainImageSrcSet() {
+    return getImageSrcSet(this.mainImage);
+  }
+
+  getProjectImageUrl(index, size = "large") {
     const image = this.projectImages[index];
     if (!image?.url) {
       console.warn(
         `No project image URL found at index ${index} for project:`,
         this.title
       );
-      return "/placeholder-image.jpg";
+      return PLACEHOLDER_IMAGE;
     }
-    return `${BASE_URL}${image.url}`;
+    return getImageUrl(image, size);
+  }
+
+  getProjectImageSrcSet(index) {
+    return getImageSrcSet(this.projectImages[index]);
   }
 
   getTotalImages() {
